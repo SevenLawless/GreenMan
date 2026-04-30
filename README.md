@@ -1,134 +1,63 @@
+# GreenBot
 
-# 🌿 green-squares-bot
+Automated diary-style commits via [`commit.py`](commit.py). You can rely on **GitHub Actions** (cloud, no PC) or run **locally**.
 
-> **A fun and educational GitHub Actions bot that automatically commits on weekdays to keep your contribution graph active.**
+## Pick how you run
 
-![GitHub Workflow Status](https://img.shields.io/badge/GitHub%20Actions-Auto%20Commit%20Bot-brightgreen?logo=github)
+| Approach | Best for |
+|----------|----------|
+| **GitHub Actions** | Automated runs and push without leaving your PC on |
+| **Local `python commit.py`** | Testing, or committing without using Actions |
 
----
+Both use the same script and rules (`commit.py`, [`.commit_tracker.json`](.commit_tracker.json)).
 
-## 💡 What is `green-squares-bot`?
+## GitHub Actions
 
-Welcome to **green-squares-bot** — a simple yet creative bot that automatically generates commits to make your GitHub contribution graph colorful and active 🌱.
+Workflow: [.github/workflows/activity.yml](.github/workflows/activity.yml).
 
-This is a **demo project** that showcases how you can use **GitHub Actions** to automate routine tasks, like generating commits on a schedule. It’s a great way to explore GitHub automation, scheduled workflows (via CRON), and Git operations — all within a lightweight and transparent project.
+1. Push this repository to GitHub.
+2. In the repo settings, ensure **Actions** are enabled. If pushes were blocked before, workflows need **Workflow permissions → Read and write**.
+3. Open **Actions → Natural GitHub Activity Bot → Run workflow** for a manual run, or rely on the schedule triggers.
 
----
+Cron expressions in the workflow use **UTC** (not IST). Confirm the UTC times against the times you want in your timezone.
 
-## ✨ Key Features
+The workflow installs Python + `pytz`, runs `commit.py`, rebases onto `origin/main`, and pushes **only when** local `main` is ahead.
 
-- 🔁 **Automated Commits on 3–5 Random Days per Week**  
-  Each week, the bot picks 3 to 5 random days (including weekends) to commit.
+## Run locally
 
-- 🔢 **Multiple Commits per Day**  
-  Generates between **3 to 15 commits** on each commit day, with natural variation.
-
-- 🕒 **Runs Three Times Daily**  
-  Scheduled runs spread throughout the day (Morning, Afternoon, Evening) to simulate organic activity.
-
-- 🧠 **Human-like Commit Messages and Quotes**  
-  Uses randomly selected inspirational quotes and emojis to simulate real development habits.
-
-- 📜 **Commit History Logging**  
-  Logs all commits in `commit_log.txt` for transparency and tracking.
-
-- 🧪 **Educational Use Only**  
-  Designed as a learning tool for GitHub Actions, automation, and CI/CD workflows.
-
----
-
-## ⚙️ How It Works
-
-This project uses a `commit.py` Python script executed through a scheduled GitHub Actions workflow (`.github/workflows/activity.yml`).
-
-The workflow runs daily at three times:
-
-- 🌅 **Morning:** `06:00 UTC` (11:30 AM IST)  
-- 🌞 **Afternoon:** `12:00 UTC` (5:30 PM IST)  
-- 🌙 **Evening:** `15:45 UTC` (9:15 PM IST)  
-
-Each run performs:
-
-1. 🧾 Git checkout  
-2. ⚙️ Git identity setup  
-3. 🎲 Weekly randomization of 3–5 commit days  
-4. ✍️ Running `commit.py` to generate 3–15 commits on commit days  
-5. 🗂️ Updating random files with quotes and messages  
-6. 🔄 Pull latest changes with rebase  
-7. 📤 Push commits if ahead  
-
----
-
-## 🚀 Getting Started
-
-### Clone the repo:
+From the repository root:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/green-squares-bot.git
-cd green-squares-bot
+pip install -r requirements.txt
+# If `pip` is not on your PATH (common on Windows), use:
+python -m pip install -r requirements.txt
+python commit.py
 ```
 
-### Push to your own GitHub repository:
+Requirements: Python 3, Git on `PATH`, and Git user identity configured.
 
-```bash
-git remote rename origin old-origin
-git remote add origin https://github.com/YOUR_USERNAME/green-squares-bot.git
-git push -u origin master
-```
+The script **only creates commits**; it does **not** `git push`. Push yourself or rely on Actions.
 
-Make sure the repository is **public** so commits show up on your GitHub profile contribution graph!
+### Why nothing happened?
 
----
+`commit.py` may exit **without committing** when:
 
-## 🔧 File Structure
+- Today’s weekday is not in this week’s random set (stored in `.commit_tracker.json` → `week_data`).
+- Today has already reached the daily maximum commits (`max_total`, default **15** in `commit.py`).
 
-```
-green-squares-bot/
-├── commit.py             # Main commit generator script
-├── daily_log.txt         # Rotating dummy file
-├── progress.md           # Rotating dummy file
-├── inspiration.txt       # Rotating dummy file
-├── commit_log.txt        # Records commit history
-└── .github/
-    └── workflows/
-        └── activity.yml  # GitHub Actions workflow
-```
+That behavior is intentional.
 
----
+## Logs and wiping files
 
-## 🤝 Contributing
+`commit.py` **appends** to:
 
-Contributions are welcome! 🎉  
-If you have ideas for:
-- Better commit logic  
-- Cool new features  
-- Code cleanup or optimization  
+- `daily_log.txt`, `progress.md`, `inspiration.txt` (one of these chosen per synthetic commit line)
+- `commit_log.txt` (summary after a successful batch)
 
-Feel free to fork this repo and open a pull request.
+Truncating those files **does not break** the script. If they are tracked in Git, wiping them creates a large diff until you commit. Clearing them does **not** reset `.commit_tracker.json` (weekly days and daily counts stay unless you edit that JSON).
 
----
+## Keeping your PC on
 
-## ⚠️ **Disclaimer**
-
-> **This project is for educational and demonstration purposes only.**  
-> It is designed to show how GitHub Actions can be used for scheduled automation tasks — not for inflating contributions or misleading viewers.
-
-Automating your GitHub activity can be a **fun and informative** way to learn about CI/CD, bots, scripting, and workflows — but it's important to use this responsibly:
-
-- Be **transparent** in your usage  
-- Avoid **spammy or misleading behavior**  
-- Present it clearly as a **testbed for learning automation**
-
----
-
-🧪 Built for learning, not for production.  
-💚 Happy green squares!  
-📅 Automation starts from: `2025-07-01`
-
----
-
-## 📄 License
-
-This project is licensed under the [MIT License](LICENSE).  
-Feel free to use, modify, and distribute it for learning and personal projects.  
-See the full license in the [LICENSE](LICENSE) file.
+- **Actions only:** your computer can be off during scheduled runs.
+- **Manual local runs:** PC on only while you execute the commands.
+- **Windows Task Scheduler** (if you automate locally): PC must run or wake for the scheduled time (or tasks run later per your scheduler settings).

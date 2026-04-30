@@ -3,7 +3,14 @@ import random
 import datetime
 import subprocess
 import json
+import sys
 import pytz  # Timezone support
+
+if hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+    except (AttributeError, OSError, ValueError):
+        pass
 
 # 🌿 Expanded inspirational quotes
 quotes = [
@@ -136,7 +143,7 @@ with open(counter_file, "w") as f:
 
 # Log
 if slot_commit > 0:
-    with open("commit_log.txt", "a") as log:
+    with open("commit_log.txt", "a", encoding="utf-8") as log:
         log.write(f"[{timestamp}] +{slot_commit} commit(s)\n")
         log.write("\n".join(log_entries) + "\n\n")
 
