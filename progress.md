@@ -105,3 +105,4 @@
 [2026-06-24 11:01:42 PM] Success is the sum of small efforts, repeated.
 [2026-06-25 02:23:30 PM] Don’t break the streak — commit today!
 [2026-06-25 07:59:24 PM] Push yourself, because no one else is going to do it for you.
+[2026-06-25 07:59:24 PM] Consistency is more important than intensity.
