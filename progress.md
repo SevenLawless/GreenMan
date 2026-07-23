@@ -153,3 +153,4 @@
 [2026-07-22 10:31:07 PM] The habit of showing up wins the game.
 [2026-07-23 01:52:06 PM] Build something you're proud of.
 [2026-07-23 01:52:06 PM] Push yourself, because no one else is going to do it for you.
+[2026-07-23 01:52:06 PM] Consistency is more important than intensity.
