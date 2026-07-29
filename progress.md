@@ -165,3 +165,4 @@
 [2026-07-29 02:01:25 PM] The habit of showing up wins the game.
 [2026-07-29 02:01:25 PM] Even a tiny push moves the needle.
 [2026-07-29 02:01:25 PM] Stay curious, keep learning.
+[2026-07-29 02:01:25 PM] Consistency is more important than intensity.
